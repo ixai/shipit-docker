@@ -1,0 +1,33 @@
+web:
+  image: shipit-docker:latest
+  environment:
+   - RAILS_ENV=production
+   # Serve static files since we don't have a proxy server setup
+   - RAILS_SERVE_STATIC_FILES=1
+  links:
+    - db
+    - redis
+  ports:
+    - "80:3000"
+  volumes:
+    - ./bin:/etc/shipit-docker/bin
+    - ./config:/etc/shipit-docker/config
+  command: /etc/shipit-docker/bin/web.sh
+
+worker:
+  image: shipit-docker:latest
+  environment:
+   - RAILS_ENV=production
+  links:
+    - db
+    - redis
+  volumes:
+    - ./bin:/etc/shipit-docker/bin
+    - ./config:/etc/shipit-docker/config
+  command: /etc/shipit-docker/bin/worker.sh
+
+db:
+  image: postgres
+
+redis:
+  image: redis
